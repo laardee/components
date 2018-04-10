@@ -1,12 +1,10 @@
 const path = require('path')
-const {
-  difference, keys, isEmpty, forEachObjIndexed, union, not, pickBy
-} = require('ramda')
+const { difference, keys, isEmpty, forEachObjIndexed, union, not, pickBy } = require('ramda')
 const getRegistryRoot = require('../getRegistryRoot')
 const { fileExists } = require('../fs')
 const getState = require('../state/getState')
 
-async function getComponentsToRemove(stateFile, loadedComponents) {
+async function getOrphanedComponents(stateFile, loadedComponents) {
   // TODO: make code functional
   let componentIdsInStateFile = []
   forEachObjIndexed((value, key) => {
@@ -41,4 +39,4 @@ async function getComponentsToRemove(stateFile, loadedComponents) {
   return Object.assign({}, ...(await Promise.all(componentsInfo)))
 }
 
-module.exports = getComponentsToRemove
+module.exports = getOrphanedComponents
