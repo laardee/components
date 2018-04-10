@@ -1,16 +1,15 @@
-const path = require('path')
 const { assoc, keys, merge, reduce } = require('ramda')
 const deferredPromise = require('../deferredPromise')
-const getRegistryRoot = require('../getRegistryRoot')
 const getChildrenIds = require('./getChildrenIds')
 const getComponent = require('./getComponent')
 const getComponentFunctions = require('./getComponentFunctions')
+const getComponentRootPath = require('./getComponentRootPath')
 const getDependencies = require('../variables/getDependencies')
 const getState = require('../state/getState')
 
 const getComponentsFromServerlessFile = async (
   stateFile,
-  componentRoot = process.cwd(),
+  componentRoot = getComponentRootPath(),
   inputs = {},
   componentId,
   components = {}
@@ -20,10 +19,7 @@ const getComponentsFromServerlessFile = async (
   const nestedComponents = await reduce(
     async (accum, componentAlias) => {
       accum = await Promise.resolve(accum)
-      const nestedComponentRoot = path.join(
-        getRegistryRoot(),
-        component.components[componentAlias].type
-      )
+      const nestedComponentRoot = getComponentRootPath(component.components[componentAlias].type)
       const nestedComponentInputs = component.components[componentAlias].inputs || {}
       const nestedComponentId = component.components[componentAlias].id
       accum = await getComponentsFromServerlessFile(
