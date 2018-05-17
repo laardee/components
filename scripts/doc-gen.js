@@ -18,7 +18,6 @@ const config = {
         const packageContents = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'))
         console.log(packageContents)
         description = packageContents.description
-        console.log('description', description)
       }
 
       if (!description) {
