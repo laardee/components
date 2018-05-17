@@ -17,8 +17,13 @@ const config = {
       if (packageJsonExists) {
         const packageContents = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'))
         console.log(packageContents)
-        description = `\n\n${packageContents.description}`
+        description = packageContents.description
         console.log('description', description)
+      }
+
+      if (!description) {
+        const configJson = getYamlConfig(instance)
+        description = configJson.description
       }
 
       const name = formatComponentName(path.basename(dir))
@@ -26,7 +31,7 @@ const config = {
       const formattedName = name.replace(/Aws|Iam/g, l => {
         return l.toUpperCase()
       })
-      return `# ${formattedName}${description}`
+      return `# ${formattedName}\n\n${description}`
     },
     COMPONENT_INPUT_TYPES(content, options, instance) {
       const json = getYamlConfig(instance)
