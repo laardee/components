@@ -1,0 +1,45 @@
+type: aws-sdk-node
+version: 0.2.0
+core: 0.2.x
+
+description: "AWS SDK for Node.js Serverless Component"
+license: Apache-2.0
+author: "Serverless, Inc. <hello@serverless.com> (https://serverless.com)"
+repository: "github:serverless/components"
+
+inputTypes:
+  serviceName:
+    type: string
+    required: true
+    displayName: AWS service name
+    description: AWS service interface object name
+    example: s3
+  region:
+    type: string
+    required: false
+    displayName: AWS region
+    description: AWS region for the service
+    example: us-east-1
+  credentials:
+    type: object
+    required: false
+    displayName: AWS credentials
+    description: AWS credentials for the service
+    properties:
+      accessKeyId:
+        type: string
+        required: false
+      secretAccessKey:
+        type: string
+        required: false
+      sessionToken:
+        type: string
+        required: false
+    example:
+      accessKeyId: ABCDACCESKEYID
+      secretAccessKey: ABCDSECRETACCESSKEY
+
+outputTypes:
+  Service:
+    type: object
+    description: service object

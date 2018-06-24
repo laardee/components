@@ -1,7 +1,6 @@
-const AWS = require('aws-sdk')
 const pack = require('./pack')
 
-const lambda = new AWS.Lambda({ region: process.env.AWS_DEFAULT_REGION || 'us-east-1' })
+let lambda
 
 async function createLambda(
   { name, handler, memory, timeout, runtime, env, description, root },
@@ -82,13 +81,23 @@ async function deleteLambda(name) {
 }
 
 async function deploy(inputs, context) {
+  const awsSdkNodeComponent = await context.load('aws-sdk-node', 'awsSdk', {
+    region: inputs.region,
+    serviceName: 'Lambda',
+    credentials: inputs.credentials
+  })
+
+  lambda = await awsSdkNodeComponent.initialize()
+
   let outputs = {}
   const configuredRole = inputs.role
   let { defaultRole } = context.state
 
   const defaultRoleComponent = await context.load('aws-iam-role', 'defaultRole', {
     name: `${inputs.name}-execution-role`,
-    service: 'lambda.amazonaws.com'
+    service: 'lambda.amazonaws.com',
+    region: inputs.region,
+    credentials: inputs.credentials
   })
 
   if (!configuredRole && !defaultRole) {
@@ -123,12 +132,22 @@ async function deploy(inputs, context) {
 }
 
 async function remove(inputs, context) {
+  const awsSdkNodeComponent = await context.load('aws-sdk-node', 'awsSdk', {
+    region: inputs.region,
+    serviceName: 'Lambda',
+    credentials: inputs.credentials
+  })
+
+  lambda = await awsSdkNodeComponent.initialize()
+
   if (!context.state.name) return { arn: null }
 
   if (context.state.defaultRole) {
     const defaultRoleComponent = await context.load('aws-iam-role', 'defaultRole', {
       name: context.state.defaultRole.name,
-      service: context.state.defaultRole.service
+      service: context.state.defaultRole.service,
+      region: inputs.region,
+      credentials: inputs.credentials
     })
     await defaultRoleComponent.remove()
   }

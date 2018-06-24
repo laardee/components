@@ -1,8 +1,7 @@
-const AWS = require('aws-sdk')
 const BbPromise = require('bluebird')
 const { equals } = require('ramda')
 
-const IAM = new AWS.IAM({ region: process.env.AWS_DEFAULT_REGION || 'us-east-1' })
+let IAM
 
 const attachRolePolicy = async ({ name, policy }) => {
   await IAM.attachRolePolicy({
@@ -83,6 +82,14 @@ const updateAssumeRolePolicy = async ({ name, service }) => {
 }
 
 const rollback = async (inputs, context) => {
+  const awsSdkNodeComponent = await context.load('aws-sdk-node', 'awsSdk', {
+    region: inputs.region,
+    serviceName: 'IAM',
+    credentials: inputs.credentials
+  })
+
+  IAM = await awsSdkNodeComponent.initialize()
+
   const { archive, state } = context
   if (!archive.name && state.name) {
     context.log(`Removing Role: ${state.name}`)
@@ -108,6 +115,14 @@ const rollback = async (inputs, context) => {
 }
 
 const deploy = async (inputs, context) => {
+  const awsSdkNodeComponent = await context.load('aws-sdk-node', 'awsSdk', {
+    region: inputs.region,
+    serviceName: 'IAM',
+    credentials: inputs.credentials
+  })
+
+  IAM = await awsSdkNodeComponent.initialize()
+
   let { state } = context
 
   if (!inputs.policy) {
@@ -159,6 +174,14 @@ const deploy = async (inputs, context) => {
 }
 
 const remove = async (inputs, context) => {
+  const awsSdkNodeComponent = await context.load('aws-sdk-node', 'awsSdk', {
+    region: inputs.region,
+    serviceName: 'IAM',
+    credentials: inputs.credentials
+  })
+
+  IAM = await awsSdkNodeComponent.initialize()
+
   if (!context.state.name) return {}
 
   const outputs = {
