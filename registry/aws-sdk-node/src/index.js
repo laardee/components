@@ -11,8 +11,13 @@ const initialize = (inputs, context) => {
   if (inputs.credentials) {
     Object.assign(params, inputs.credentials)
   }
-
-  return new AWS[inputs.serviceName](params)
+  try {
+    return new AWS[inputs.serviceName](params)
+  } catch (exception) {
+    throw new Error(
+      `Failed to create a service object '${inputs.serviceName}' - ${exception.message}`
+    )
+  }
 }
 
 module.exports = {

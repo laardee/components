@@ -12,7 +12,7 @@ inputTypes:
     type: string
     required: true
     displayName: AWS service name
-    description: AWS service interface object name
+    description: AWS service interface object name, e.g. Lambda, S3 or CloudFront
     example: s3
   region:
     type: string

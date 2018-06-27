@@ -82,13 +82,13 @@ const updateAssumeRolePolicy = async ({ name, service }) => {
 }
 
 const rollback = async (inputs, context) => {
-  const awsSdkNodeComponent = await context.load('aws-sdk-node', 'awsSdk', {
+  const awsSdkNodeComponentIAM = await context.load('aws-sdk-node', 'awsSdk', {
     region: inputs.region,
     serviceName: 'IAM',
     credentials: inputs.credentials
   })
 
-  IAM = await awsSdkNodeComponent.initialize()
+  IAM = await awsSdkNodeComponentIAM.initialize()
 
   const { archive, state } = context
   if (!archive.name && state.name) {
@@ -115,13 +115,13 @@ const rollback = async (inputs, context) => {
 }
 
 const deploy = async (inputs, context) => {
-  const awsSdkNodeComponent = await context.load('aws-sdk-node', 'awsSdk', {
+  const awsSdkNodeComponentIAM = await context.load('aws-sdk-node', 'awsSdk', {
     region: inputs.region,
     serviceName: 'IAM',
     credentials: inputs.credentials
   })
 
-  IAM = await awsSdkNodeComponent.initialize()
+  IAM = await awsSdkNodeComponentIAM.initialize()
 
   let { state } = context
 
@@ -174,13 +174,13 @@ const deploy = async (inputs, context) => {
 }
 
 const remove = async (inputs, context) => {
-  const awsSdkNodeComponent = await context.load('aws-sdk-node', 'awsSdk', {
+  const awsSdkNodeComponentIAM = await context.load('aws-sdk-node', 'awsSdk', {
     region: inputs.region,
     serviceName: 'IAM',
     credentials: inputs.credentials
   })
 
-  IAM = await awsSdkNodeComponent.initialize()
+  IAM = await awsSdkNodeComponentIAM.initialize()
 
   if (!context.state.name) return {}
 

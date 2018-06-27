@@ -81,13 +81,13 @@ async function deleteLambda(name) {
 }
 
 async function deploy(inputs, context) {
-  const awsSdkNodeComponent = await context.load('aws-sdk-node', 'awsSdk', {
+  const awsSdkNodeComponentLambda = await context.load('aws-sdk-node', 'awsSdk', {
     region: inputs.region,
     serviceName: 'Lambda',
     credentials: inputs.credentials
   })
 
-  lambda = await awsSdkNodeComponent.initialize()
+  lambda = await awsSdkNodeComponentLambda.initialize()
 
   let outputs = {}
   const configuredRole = inputs.role
@@ -132,13 +132,13 @@ async function deploy(inputs, context) {
 }
 
 async function remove(inputs, context) {
-  const awsSdkNodeComponent = await context.load('aws-sdk-node', 'awsSdk', {
+  const awsSdkNodeComponentLambda = await context.load('aws-sdk-node', 'awsSdk', {
     region: inputs.region,
     serviceName: 'Lambda',
     credentials: inputs.credentials
   })
 
-  lambda = await awsSdkNodeComponent.initialize()
+  lambda = await awsSdkNodeComponentLambda.initialize()
 
   if (!context.state.name) return { arn: null }
 
