@@ -165,9 +165,14 @@ describe('#executeComponent()', () => {
       invalid: 'type'
     }
 
-    await expect(
-      executeComponent(componentId, components, stateFile, archive, command, options)
-    ).rejects.toThrow('Type error(s)')
+    let res
+    try {
+      res = await executeComponent(componentId, components, stateFile, archive, command, options)
+    } catch (error) {
+      expect(error.message).toContain('Type error(s)')
+    }
+    expect(res).toBeUndefined()
+
     stateFile.myFunction.outputs = {
       result: 'deployed'
     }
