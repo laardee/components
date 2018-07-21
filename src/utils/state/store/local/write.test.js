@@ -1,8 +1,9 @@
-const { getTmpDir, writeFile } = require('@serverless/utils')
+const { getTmpDir } = require('@serverless/utils')
+const { readJson } = require('fs-extra')
 const path = require('path')
-const readStateFile = require('./readStateFile')
+const writeStateFile = require('./write')
 
-describe('#readStateFile()', () => {
+describe('#writeStateFile()', () => {
   let oldCwd
   let tmpDirPath
   let stateFilePath
@@ -32,7 +33,6 @@ describe('#readStateFile()', () => {
   beforeEach(async () => {
     tmpDirPath = await getTmpDir()
     stateFilePath = path.join(tmpDirPath, 'state.json')
-    await writeFile(stateFilePath, fileContent)
     projectPath = tmpDirPath
     oldCwd = process.cwd()
     process.chdir(tmpDirPath)
@@ -42,14 +42,9 @@ describe('#readStateFile()', () => {
     process.chdir(oldCwd)
   })
 
-  it('should read the projects state file if present', async () => {
-    const res = await readStateFile(projectPath)
-    expect(res).toEqual(fileContent)
-  })
-
-  it('should return an empty object if the project does not contain a state file', async () => {
-    projectPath = await getTmpDir()
-    const res = await readStateFile(projectPath)
-    expect(res).toEqual({})
+  it('should write the content to disk', async () => {
+    await writeStateFile(projectPath, fileContent)
+    const stateFileContent = await readJson(stateFilePath)
+    expect(stateFileContent).toEqual(fileContent)
   })
 })
