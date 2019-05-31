@@ -5,7 +5,7 @@
 
 const path = require('path')
 const Component = require('../component/serverless')
-const { readFile, difference } = require('../../utils')
+const { readFile, difference, filter, merge } = require('../../utils')
 const { ROOT_NODE_NAME } = require('./constants')
 const variables = require('./utils/variables')
 const { getComponents, prepareComponents, createGraph, logOutputs, loadState } = require('./utils')
@@ -30,6 +30,11 @@ class ComponentDeclarative extends Component {
 
     // TODO: refactor so that we don't need to pass `this` into it
     const componentsToRun = await prepareComponents(configComponents, this)
+    console.log(componentsToRun)
+    const componentsToReplace = filter(({ shouldDeploy }) => shouldDeploy === 'replace')(
+      componentsToRun
+    )
+    console.log({ componentsToReplace })
     let componentsToRemove = {}
 
     if (this.state.components) {
@@ -51,7 +56,10 @@ class ComponentDeclarative extends Component {
         }
         return accum
       }, {})
-      componentsToRemove = await prepareComponents(componentsToRemove, this)
+      componentsToRemove = merge(
+        componentsToReplace,
+        await prepareComponents(componentsToRemove, this)
+      )
     }
 
     const components = { ...componentsToRun, ...componentsToRemove }
